@@ -184,6 +184,20 @@ Renderer.projectVertices = function(verts, viewMat) {
 
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 12 lines of code.
+  var orthogonalScale = 5;
+  for (var i = 0; i < 3; i++) {
+    projectedVerts[i] = new THREE.Vector4(verts[i].x, verts[i].y, verts[i].z, 1.0);
+
+    projectedVerts[i].x /= orthogonalScale;
+    projectedVerts[i].y /= orthogonalScale * this.height / this.width;
+	projectedVerts[i].z /= orthogonalScale;
+	
+	projectedVerts[i].applyMatrix4(viewMat);
+	
+    projectedVerts[i].x = projectedVerts[i].x * this.width / 2 + this.width / 2;
+    projectedVerts[i].y = projectedVerts[i].y * this.height / 2 + this.height / 2;
+
+  }
   // ----------- STUDENT CODE END ------------
 
   return projectedVerts;
@@ -192,6 +206,7 @@ Renderer.projectVertices = function(verts, viewMat) {
 Renderer.computeBoundingBox = function(projectedVerts) {
   var box = {};
   box.minX = -1;
+  box.minY = -1;
   box.minY = -1;
   box.maxX = -1;
   box.maxY = -1;
