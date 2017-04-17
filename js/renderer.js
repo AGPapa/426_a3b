@@ -90,16 +90,16 @@ Renderer.render = function() {
 
   var eps = 0.01;
   if (!(this.cameraUpVector.distanceTo(this.camera.up) < eps &&
-      this.cameraPosition.distanceTo(this.camera.position) < eps &&
-      this.cameraLookAtVector.distanceTo(Main.controls.target) < eps)) {
+    this.cameraPosition.distanceTo(this.camera.position) < eps &&
+    this.cameraLookAtVector.distanceTo(Main.controls.target) < eps)) {
     this.cameraUpdated = false;
     // update camera position
     this.cameraLookAtVector.copy(Main.controls.target);
     this.cameraPosition.copy(this.camera.position);
     this.cameraUpVector.copy(this.camera.up);
   } else { // camera's stable, update url once
-    if (!this.cameraUpdated) {
-      Gui.updateUrl();
+  if (!this.cameraUpdated) {
+    Gui.updateUrl();
       this.cameraUpdated = true; //update one time
     }
   }
@@ -190,10 +190,10 @@ Renderer.projectVertices = function(verts, viewMat) {
 
     projectedVerts[i].x /= orthogonalScale;
     projectedVerts[i].y /= orthogonalScale * this.height / this.width;
-	projectedVerts[i].z /= orthogonalScale;
-	
-	projectedVerts[i].applyMatrix4(viewMat);
-	
+    projectedVerts[i].z /= orthogonalScale;
+
+    projectedVerts[i].applyMatrix4(viewMat);
+
     projectedVerts[i].x = projectedVerts[i].x * this.width / 2 + this.width / 2;
     projectedVerts[i].y = projectedVerts[i].y * this.height / 2 + this.height / 2;
 
@@ -220,6 +220,19 @@ Renderer.computeBoundingBox = function(projectedVerts) {
 
 Renderer.computeBarycentric = function(projectedVerts, x, y) {
   var triCoords = [];
+
+  var F01 = (projectedVerts[0].y - projectedVerts[1].y) * x + (projectedVerts[1].x - projectedVerts[0].x) * y + (projectedVerts[0].x * projectedVerts[1].y - projectedVerts[0].y * projectedVerts[1].x);
+  var F12 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
+  var F20 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
+
+  if (F01 <= 0 || F12 <= 0 || F20 <= 0) {
+    return undefined;
+  }
+  else {
+    triCoords[0] = F01;
+    triCoords[1] = F12;
+    triCoords[2] = F20;
+  }
   // (see https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/)
   // return undefined if (x,y) is outside the triangle
   // ----------- STUDENT CODE BEGIN ------------
@@ -278,17 +291,17 @@ Renderer.drawTriangle = function(verts, normals, uvs, material, viewMat) {
 
   switch (this.shaderMode) {
     case "Wire":
-      this.drawTriangleWire(projectedVerts);
-      break;
+    this.drawTriangleWire(projectedVerts);
+    break;
     case "Flat":
-      this.drawTriangleFlat(verts, projectedVerts, normals, uvs, material);
-      break;
+    this.drawTriangleFlat(verts, projectedVerts, normals, uvs, material);
+    break;
     case "Gouraud":
-      this.drawTriangleGouraud(verts, projectedVerts, normals, uvs, material);
-      break;
+    this.drawTriangleGouraud(verts, projectedVerts, normals, uvs, material);
+    break;
     case "Phong":
-      this.drawTrianglePhong(verts, projectedVerts, normals, uvs, material);
-      break;
+    this.drawTrianglePhong(verts, projectedVerts, normals, uvs, material);
+    break;
     default:
   }
 };
