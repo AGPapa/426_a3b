@@ -189,7 +189,7 @@ Renderer.projectVertices = function(verts, viewMat) {
     projectedVerts[i] = new THREE.Vector4(verts[i].x, verts[i].y, verts[i].z, 1.0);
 
     projectedVerts[i].x /= orthogonalScale;
-    projectedVerts[i].y /= orthogonalScale * this.height / this.width;
+    projectedVerts[i].y /= orthogonalScale;
 	projectedVerts[i].z /= orthogonalScale;
 	
 	projectedVerts[i].applyMatrix4(viewMat);
