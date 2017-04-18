@@ -210,7 +210,6 @@ Renderer.computeBoundingBox = function(projectedVerts) {
   var box = {};
   box.minX = -1;
   box.minY = -1;
-  box.minY = -1;
   box.maxX = -1;
   box.maxY = -1;
 
@@ -219,10 +218,8 @@ Renderer.computeBoundingBox = function(projectedVerts) {
   for (var i = 0; i < 3; i++) {
 	  if  (projectedVerts[i].x < box.minX) box.minX = projectedVerts[i].x;
 	  if  (projectedVerts[i].y < box.minY) box.minY = projectedVerts[i].y;
-	  if  (projectedVerts[i].z < box.minZ) box.minZ = projectedVerts[i].z;
 	  if  (projectedVerts[i].x > box.maxX) box.maxX = projectedVerts[i].x;
 	  if  (projectedVerts[i].y > box.maxY) box.maxY = projectedVerts[i].y;
-	  if  (projectedVerts[i].z > box.maxZ) box.maxZ = projectedVerts[i].z;
   }
   // ----------- STUDENT CODE END ------------
 
@@ -273,6 +270,9 @@ Renderer.drawTriangleWire = function(projectedVerts) {
 Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 45 lines of code.
+//  var box = computeBoundingBox(prokectedVerts);
+//  for (var x = box.minX;)
+//  computeBarycentric(projectedVerts, )
   // ----------- STUDENT CODE END ------------
 };
 
