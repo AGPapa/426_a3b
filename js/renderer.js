@@ -211,6 +211,14 @@ Renderer.computeBoundingBox = function(projectedVerts) {
 
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 14 lines of code.
+  for (var i = 0; i < 3; i++) {
+	  if  (projectedVerts[i].x < box.minX) box.minX = projectedVerts[i].x;
+	  if  (projectedVerts[i].y < box.minY) box.minY = projectedVerts[i].y;
+	  if  (projectedVerts[i].z < box.minZ) box.minZ = projectedVerts[i].z;
+	  if  (projectedVerts[i].x > box.maxX) box.maxX = projectedVerts[i].x;
+	  if  (projectedVerts[i].y > box.maxY) box.maxY = projectedVerts[i].y;
+	  if  (projectedVerts[i].z > box.maxZ) box.maxZ = projectedVerts[i].z;
+  }
   // ----------- STUDENT CODE END ------------
 
   return box;
