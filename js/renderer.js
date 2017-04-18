@@ -16,6 +16,11 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
   var ndotl = normal.dot(light_dir);
   color.plus(phongMaterial.diffuse.copy().multipliedBy(ndotl));
 
+  var r = lightPos.reflect(normal);
+  var vdotr = view.dot(r);
+  color.plus(phongMaterial.specular.copy().multipliedBy(vdotr));
+
+  color.plus(phongMaterial.ambient.copy());
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 9 lines of code.
   // ----------- STUDENT CODE END ------------
