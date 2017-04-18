@@ -302,17 +302,17 @@ Renderer.drawTriangle = function(verts, normals, uvs, material, viewMat) {
 
   switch (this.shaderMode) {
     case "Wire":
-    this.drawTriangleWire(projectedVerts);
-    break;
+		this.drawTriangleWire(projectedVerts);
+		break;
     case "Flat":
-    this.drawTriangleFlat(verts, projectedVerts, normals, uvs, material);
-    break;
+		this.drawTriangleFlat(verts, projectedVerts, normals, uvs, material);
+		break;
     case "Gouraud":
-    this.drawTriangleGouraud(verts, projectedVerts, normals, uvs, material);
-    break;
+		this.drawTriangleGouraud(verts, projectedVerts, normals, uvs, material);
+		break;
     case "Phong":
-    this.drawTrianglePhong(verts, projectedVerts, normals, uvs, material);
-    break;
+		this.drawTrianglePhong(verts, projectedVerts, normals, uvs, material);
+		break;
     default:
   }
 };
