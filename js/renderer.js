@@ -231,9 +231,8 @@ Renderer.computeBarycentric = function(projectedVerts, x, y) {
 
   var F01 = (projectedVerts[0].y - projectedVerts[1].y) * x + (projectedVerts[1].x - projectedVerts[0].x) * y + (projectedVerts[0].x * projectedVerts[1].y - projectedVerts[0].y * projectedVerts[1].x);
   var F12 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
-  var F20 = (projectedVerts[0].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[0].x) * y + (projectedVerts[0].x * projectedVerts[2].y - projectedVerts[0].y * projectedVerts[2].x);
-  F20 = - F20;
-  
+  var F20 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
+
   if (F01 <= 0 || F12 <= 0 || F20 <= 0) {
     return undefined;
   }
@@ -271,16 +270,9 @@ Renderer.drawTriangleWire = function(projectedVerts) {
 Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 45 lines of code.
-  var color = new Pixel(1.0, 0, 0);
-  var box = Renderer.computeBoundingBox(projectedVerts);
-  for (var x = box.minX; x < box.maxX; x++) {
-	  for (var y = box.minY; y < box.maxY; y++) {
-		var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
-		if (triCoords != undefined) {
-			this.buffer.setPixel(x, y, color);
-		}
-	}
-  }
+//  var box = computeBoundingBox(prokectedVerts);
+//  for (var x = box.minX;)
+//  computeBarycentric(projectedVerts, )
   // ----------- STUDENT CODE END ------------
 };
 
