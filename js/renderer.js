@@ -196,6 +196,7 @@ Renderer.projectVertices = function(verts, viewMat) {
 	
 	projectedVerts[i].x /= projectedVerts[i].w;
 	projectedVerts[i].y /= projectedVerts[i].w;
+	projectedVerts[i].z /= projectedVerts[i].w;
 	
     projectedVerts[i].x = projectedVerts[i].x * this.width / 2 + this.width / 2;
     projectedVerts[i].y = projectedVerts[i].y * this.height / 2 + this.height / 2;
@@ -270,9 +271,20 @@ Renderer.drawTriangleWire = function(projectedVerts) {
 Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 45 lines of code.
-//  var box = computeBoundingBox(prokectedVerts);
-//  for (var x = box.minX;)
-//  computeBarycentric(projectedVerts, )
+	var color = new Pixel(1.0, 0, 0);
+	color = material.color;
+	var box = Renderer.computeBoundingBox(projectedVerts);
+	for (var x = box.minX; x < box.maxX; x++) {
+		for (var y = box.minY; y < box.maxY; y++) {
+			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
+			if (triCoords != undefined) {
+				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
+					this.zBuffer[x][y] = projectedVerts[0].z;
+					this.buffer.setPixel(x, y, color);
+				}
+			}
+		}
+	}
   // ----------- STUDENT CODE END ------------
 };
 
