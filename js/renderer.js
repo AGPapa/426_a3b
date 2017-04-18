@@ -184,15 +184,13 @@ Renderer.projectVertices = function(verts, viewMat) {
 
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 12 lines of code.
-  var orthogonalScale = 5;
   for (var i = 0; i < 3; i++) {
     projectedVerts[i] = new THREE.Vector4(verts[i].x, verts[i].y, verts[i].z, 1.0);
-
-    projectedVerts[i].x /= orthogonalScale;
-    projectedVerts[i].y /= orthogonalScale;
-	projectedVerts[i].z /= orthogonalScale;
 	
 	projectedVerts[i].applyMatrix4(viewMat);
+	
+	projectedVerts[i].x /= projectedVerts[i].w;
+	projectedVerts[i].y /= projectedVerts[i].w;
 	
     projectedVerts[i].x = projectedVerts[i].x * this.width / 2 + this.width / 2;
     projectedVerts[i].y = projectedVerts[i].y * this.height / 2 + this.height / 2;
