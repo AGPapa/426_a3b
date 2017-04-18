@@ -231,7 +231,7 @@ Renderer.computeBarycentric = function(projectedVerts, x, y) {
 
   var F01 = (projectedVerts[0].y - projectedVerts[1].y) * x + (projectedVerts[1].x - projectedVerts[0].x) * y + (projectedVerts[0].x * projectedVerts[1].y - projectedVerts[0].y * projectedVerts[1].x);
   var F12 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
-  var F20 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
+  var F20 = (projectedVerts[2].y - projectedVerts[0].y) * x + (projectedVerts[0].x - projectedVerts[2].x) * y + (projectedVerts[2].x * projectedVerts[0].y - projectedVerts[2].y * projectedVerts[0].x);
 
   if (F01 <= 0 || F12 <= 0 || F20 <= 0) {
     return undefined;
