@@ -19,9 +19,10 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
   var l = (new THREE.Vector3()).copy(lightPos);
   var r = l.reflect(normal);
   var vdotr = view.dot(r);
-  color.plus(phongMaterial.specular.copy().multipliedBy(vdotr));
 
-  color.plus(phongMaterial.ambient.copy());
+//  color.plus(phongMaterial.specular.copy().multipliedBy(vdotr));
+
+   color.plus(phongMaterial.ambient);
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 9 lines of code.
   // ----------- STUDENT CODE END ------------
@@ -286,17 +287,21 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	//normal is cross of two edges
 	//view is this.cameraPosition.sub(centroid)
 	//phongMaterial is Renderer.phongMaterial()
-//	color = material.diffuse;
-//	color = new Pixel(1.0, 0, 0);
+//	color = new Pixel(projectedVerts[0].x/this.width, 0, 0); //reflect thing needs more work
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = box.minX; x < box.maxX; x++) {
+		var seen = false;
 		for (var y = box.minY; y < box.maxY; y++) {
 			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
 			if (triCoords != undefined) {
+				seen = true;
+				//01, 10, 20
 				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
 					this.zBuffer[x][y] = projectedVerts[0].z;
 					this.buffer.setPixel(x, y, color);
 				}
+			} else if (seen) {
+				break; 
 			}
 		}
 	}
