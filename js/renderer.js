@@ -278,8 +278,10 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	cent.add(verts[0]).add(verts[1]).add(verts[2]);
 	cent.divideScalar(3);
 	var view = this.cameraPosition.sub(cent);
-	var normal = new THREE.Vector3(0,0,0).copy(verts[0]);
-	normal.cross(verts[1]);
+	var v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
+	var normal = new THREE.Vector3(0,0,0).copy(v0.sub(verts[1]));
+	v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
+	normal.cross(v0.sub(verts[2]));
 	normal.normalize();
 	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
