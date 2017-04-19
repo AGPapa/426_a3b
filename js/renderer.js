@@ -16,7 +16,8 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
   var ndotl = normal.dot(light_dir);
   color.plus(phongMaterial.diffuse.copy().multipliedBy(ndotl));
 
-  var r = lightPos.reflect(normal);
+  var l = (new THREE.Vector3()).copy(lightPos);
+  var r = l.reflect(normal);
   var vdotr = view.dot(r);
   color.plus(phongMaterial.specular.copy().multipliedBy(vdotr));
 
@@ -272,7 +273,21 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 45 lines of code.
 	var color = new Pixel(1.0, 0, 0);
-	color = material.color;
+	var cent = new THREE.Vector3(0,0,0);
+	cent.add(verts[0]).add(verts[1]).add(verts[2]);
+	cent.divideScalar(3);
+	var view = this.cameraPosition.sub(cent);
+	var normal = new THREE.Vector3(0,0,0).copy(verts[0]);
+	normal.cross(verts[1]);
+	normal.normalize();
+	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
+	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
+	//centroid is average of 3,
+	//normal is cross of two edges
+	//view is this.cameraPosition.sub(centroid)
+	//phongMaterial is Renderer.phongMaterial()
+//	color = material.diffuse;
+//	color = new Pixel(1.0, 0, 0);
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = box.minX; x < box.maxX; x++) {
 		for (var y = box.minY; y < box.maxY; y++) {
