@@ -211,14 +211,14 @@ Renderer.projectVertices = function(verts, viewMat) {
 
 Renderer.computeBoundingBox = function(projectedVerts) {
   var box = {};
-  box.minX = -1;
-  box.minY = -1;
-  box.maxX = -1;
-  box.maxY = -1;
+  box.minX = projectedVerts[0].x;
+  box.minY = projectedVerts[0].y;
+  box.maxX = projectedVerts[0].x;
+  box.maxY = projectedVerts[0].y;
 
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 14 lines of code.
-  for (var i = 0; i < 3; i++) {
+  for (var i = 1; i < 3; i++) {
 	  if  (projectedVerts[i].x < box.minX) box.minX = projectedVerts[i].x;
 	  if  (projectedVerts[i].y < box.minY) box.minY = projectedVerts[i].y;
 	  if  (projectedVerts[i].x > box.maxX) box.maxX = projectedVerts[i].x;
@@ -226,6 +226,11 @@ Renderer.computeBoundingBox = function(projectedVerts) {
   }
   // ----------- STUDENT CODE END ------------
 
+  if (box.minX < 0) box.minX = 0;
+  if (box.minY < 0) box.minY = 0;
+  if (box.maxX >= this.width) box.maxX = this.width - 1;
+  if (box.maxY >= this.height) box.maxY = this.height - 1;
+  
   return box;
 };
 
@@ -236,13 +241,18 @@ Renderer.computeBarycentric = function(projectedVerts, x, y) {
   var F12 = (projectedVerts[1].y - projectedVerts[2].y) * x + (projectedVerts[2].x - projectedVerts[1].x) * y + (projectedVerts[1].x * projectedVerts[2].y - projectedVerts[1].y * projectedVerts[2].x);
   var F20 = (projectedVerts[2].y - projectedVerts[0].y) * x + (projectedVerts[0].x - projectedVerts[2].x) * y + (projectedVerts[2].x * projectedVerts[0].y - projectedVerts[2].y * projectedVerts[0].x);
 
+  
   if (F01 <= 0 || F12 <= 0 || F20 <= 0) {
     return undefined;
   }
   else {
-    triCoords[0] = F01;
-    triCoords[1] = F12;
-    triCoords[2] = F20;
+	    var total = F01 + F12 + F20;
+		F01 = F01 / total;
+		F12 = F12 / total;
+		F20 = F20 / total;
+		triCoords[0] = F01;
+		triCoords[1] = F12;
+		triCoords[2] = F20;
   }
   // (see https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/)
   // return undefined if (x,y) is outside the triangle
@@ -291,9 +301,9 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	//phongMaterial is Renderer.phongMaterial()
 //	color = new Pixel(projectedVerts[0].x/this.width, 0, 0); //reflect thing needs more work
 	var box = Renderer.computeBoundingBox(projectedVerts);
-	for (var x = box.minX; x < box.maxX; x++) {
+	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
 		var seen = false;
-		for (var y = box.minY; y < box.maxY; y++) {
+		for (var y = Math.floor(box.minY); y < box.maxY; y++) {
 			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
 			if (triCoords != undefined) {
 				seen = true;
