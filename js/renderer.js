@@ -309,8 +309,9 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 			if (triCoords != undefined) {
 				seen = true;
 				//01, 10, 20
-				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
-					this.zBuffer[x][y] = projectedVerts[0].z;
+				var z = projectedVerts[0].z * triCoords[0] + projectedVerts[1].z * triCoords[1] + projectedVerts[2].z * triCoords[2];
+				if (z < this.zBuffer[x][y]) {
+					this.zBuffer[x][y] = z;
 					this.buffer.setPixel(x, y, color);
 				}
 			} else if (seen) {
@@ -345,8 +346,9 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 			if (triCoords != undefined) {
 				seen = true;
 				//01, 10, 20
-				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
-					this.zBuffer[x][y] = projectedVerts[0].z;
+				var z = projectedVerts[0].z * triCoords[0] + projectedVerts[1].z * triCoords[1] + projectedVerts[2].z * triCoords[2];
+				if (z < this.zBuffer[x][y]) {
+					this.zBuffer[x][y] = z;
 					var c0 = (color0.copy()).multipliedBy(triCoords[0]);
 					var c1 = (color1.copy()).multipliedBy(triCoords[1]);
 					var c2 = (color2.copy()).multipliedBy(triCoords[2]);
