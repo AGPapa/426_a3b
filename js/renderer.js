@@ -294,17 +294,13 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	cent.divideScalar(3);
 	var view = this.cameraPosition.sub(cent);
 	var v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
-	var normal = new THREE.Vector3(0,0,0).copy(v0.sub(verts[1]));
-	v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
-	normal.cross(v0.sub(verts[2]));
+	
+	var normal = (new THREE.Vector3(0,0,0)).add(normals[0]).add(normals[1]).add(normals[2]);
 	normal.normalize();
+	
 	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
-	//centroid is average of 3,
-	//normal is cross of two edges
-	//view is this.cameraPosition.sub(centroid)
-	//phongMaterial is Renderer.phongMaterial()
-//	color = new Pixel(projectedVerts[0].x/this.width, 0, 0); //reflect thing needs more work
+	
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
 		var seen = false;
@@ -329,6 +325,42 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 42 lines of code.
+	/*
+	var v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
+	var normal = new THREE.Vector3(0,0,0).copy(v0.sub(verts[1]));
+	v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
+	normal.cross(v0.sub(verts[2])); //different normal for each vertex?
+	normal.normalize();
+	
+	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
+	
+	var view0 = this.cameraPosition.sub(verts[0]);
+	var color0 = Reflection.phongReflectionModel(verts[0], view0, normal, this.lightPos, phongMaterial)
+	
+	var view1 = this.cameraPosition.sub(verts[0]);
+	var color1 = Reflection.phongReflectionModel(verts[1], view1, normal, this.lightPos, phongMaterial)
+	
+	var view2 = this.cameraPosition.sub(verts[0]);
+	var color2 = Reflection.phongReflectionModel(verts[2], view2, normal, this.lightPos, phongMaterial)
+	
+	var box = Renderer.computeBoundingBox(projectedVerts);
+	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
+		var seen = false;
+		for (var y = Math.floor(box.minY); y < box.maxY; y++) {
+			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
+			if (triCoords != undefined) {
+				seen = true;
+				//01, 10, 20
+				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
+					this.zBuffer[x][y] = projectedVerts[0].z;
+					this.buffer.setPixel(x, y, color);
+				}
+			} else if (seen) {
+				break; 
+			}
+		}
+	}
+	*/
   // ----------- STUDENT CODE END ------------
 };
 
