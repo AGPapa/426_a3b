@@ -330,13 +330,13 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
 	
 	var view0 = this.cameraPosition.sub(verts[0]);
-	var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial)
+	var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial);
 	
 	var view1 = this.cameraPosition.sub(verts[1]);
-	var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial)
+	var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial);
 	
 	var view2 = this.cameraPosition.sub(verts[2]);
-	var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial)
+	var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial);
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
@@ -368,6 +368,39 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 53 lines of code.
+	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
+
+	var box = Renderer.computeBoundingBox(projectedVerts);
+	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
+		var seen = false;
+		for (var y = Math.floor(box.minY); y < box.maxY; y++) {
+			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
+			if (triCoords != undefined) {
+				seen = true;
+				//01, 10, 20
+				var z = projectedVerts[0].z * triCoords[0] + projectedVerts[1].z * triCoords[1] + projectedVerts[2].z * triCoords[2];
+				if (z < this.zBuffer[x][y]) {
+					this.zBuffer[x][y] = z;
+					
+					var n0 = ((new THREE.Vector3()).copy(normals[0])).multiplyScalar(triCoords[0]);
+					var n1 = ((new THREE.Vector3()).copy(normals[1])).multiplyScalar(triCoords[1]);
+					var n2 = ((new THREE.Vector3()).copy(normals[2])).multiplyScalar(triCoords[2]);
+					var n = n0.add(n1).add(n2);
+					
+					var v0 = ((new THREE.Vector3()).copy(verts[0])).multiplyScalar(triCoords[0]);
+					var v1 = ((new THREE.Vector3()).copy(verts[1])).multiplyScalar(triCoords[1]);
+					var v2 = ((new THREE.Vector3()).copy(verts[2])).multiplyScalar(triCoords[2]);
+					var v = v0.add(v1).add(v2);
+					
+					var view = this.cameraPosition.sub(v);
+					var color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial)
+					this.buffer.setPixel(x, y, color);
+				}
+			} else if (seen) {
+				break; 
+			}
+		}
+	}
   // ----------- STUDENT CODE END ------------
 };
 
