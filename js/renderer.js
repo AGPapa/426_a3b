@@ -298,7 +298,12 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	var normal = (new THREE.Vector3(0,0,0)).add(normals[0]).add(normals[1]).add(normals[2]);
 	normal.normalize();
 	
-	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
+	var phongMaterial;
+	if (uvs != undefined) {
+		phongMaterial = Renderer.getPhongMaterial(uvs[0], material);
+	} else {
+		phongMaterial = Renderer.getPhongMaterial(undefined, material);
+	}
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
