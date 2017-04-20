@@ -18,11 +18,11 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
 
   var l = (((new THREE.Vector3()).copy(lightPos)).sub(vertex)).normalize();
   var n = (new THREE.Vector3()).copy(normal);
-  var r = ((n.multiplyScalar((l.dot(normal))*2)).sub(l)).normalize();
+  var r = l.reflect(n);
   var e = (((new THREE.Vector3()).copy(view)).sub(vertex)).normalize();
   var vdotr = e.dot(r);
   if (vdotr < 0) vdotr = 0;
-  if (vdotr > 1) vdotr = 1;
+//  if (vdotr > 1) vdotr = 1;
   var v = Math.pow(vdotr,phongMaterial.shininess);
   var spec = (phongMaterial.specular.copy()).multipliedBy(v);
   color.plus(spec);
