@@ -255,9 +255,9 @@ Renderer.computeBarycentric = function(projectedVerts, x, y) {
 		F01 = F01 / total;
 		F12 = F12 / total;
 		F20 = F20 / total;
-		triCoords[0] = F01;
-		triCoords[1] = F12;
-		triCoords[2] = F20;
+		triCoords[0] = F12;
+		triCoords[1] = F20;
+		triCoords[2] = F01;
   }
   // (see https://fgiesen.wordpress.com/2013/02/06/the-barycentric-conspirac/)
   // return undefined if (x,y) is outside the triangle
@@ -325,23 +325,17 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 42 lines of code.
-	/*
-	var v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
-	var normal = new THREE.Vector3(0,0,0).copy(v0.sub(verts[1]));
-	v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
-	normal.cross(v0.sub(verts[2])); //different normal for each vertex?
-	normal.normalize();
 	
 	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
 	
 	var view0 = this.cameraPosition.sub(verts[0]);
-	var color0 = Reflection.phongReflectionModel(verts[0], view0, normal, this.lightPos, phongMaterial)
+	var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial)
 	
-	var view1 = this.cameraPosition.sub(verts[0]);
-	var color1 = Reflection.phongReflectionModel(verts[1], view1, normal, this.lightPos, phongMaterial)
+	var view1 = this.cameraPosition.sub(verts[1]);
+	var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial)
 	
-	var view2 = this.cameraPosition.sub(verts[0]);
-	var color2 = Reflection.phongReflectionModel(verts[2], view2, normal, this.lightPos, phongMaterial)
+	var view2 = this.cameraPosition.sub(verts[2]);
+	var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial)
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
@@ -353,14 +347,18 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 				//01, 10, 20
 				if (projectedVerts[0].z < this.zBuffer[x][y]) { //not quite right
 					this.zBuffer[x][y] = projectedVerts[0].z;
-					this.buffer.setPixel(x, y, color);
+					var c0 = (color0.copy()).multipliedBy(triCoords[0]);
+					var c1 = (color1.copy()).multipliedBy(triCoords[1]);
+					var c2 = (color2.copy()).multipliedBy(triCoords[2]);
+					
+					this.buffer.setPixel(x, y, c0.plus(c1).plus(c2));
 				}
 			} else if (seen) {
 				break; 
 			}
 		}
 	}
-	*/
+	
   // ----------- STUDENT CODE END ------------
 };
 
