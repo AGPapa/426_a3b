@@ -299,11 +299,7 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	normal.normalize();
 	
 	var phongMaterial;
-	if (uvs != undefined) {
-		phongMaterial = Renderer.getPhongMaterial(uvs[0], material);
-	} else {
-		phongMaterial = Renderer.getPhongMaterial(undefined, material);
-	}
+	phongMaterial = Renderer.getPhongMaterial(undefined, material);
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
@@ -373,7 +369,7 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, material) {
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 53 lines of code.
-	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
+	var phongMaterial = Renderer.getPhongMaterial(undefined, material);
 
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
@@ -396,9 +392,18 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 					var v1 = ((new THREE.Vector3()).copy(verts[1])).multiplyScalar(triCoords[1]);
 					var v2 = ((new THREE.Vector3()).copy(verts[2])).multiplyScalar(triCoords[2]);
 					var v = v0.add(v1).add(v2);
-					
 					var view = this.cameraPosition.sub(v);
-					var color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial)
+					
+					var color;
+					if (uvs != undefined) {
+						var uv = {};
+						uv.x = uvs[0].x*triCoords[0]+uvs[1].x*triCoords[1]+uvs[2].x*triCoords[2];
+						uv.y = uvs[0].y*triCoords[0]+uvs[1].y*triCoords[1]+uvs[2].y*triCoords[2];
+						var newPhongMaterial = Renderer.getPhongMaterial(uv, material);
+						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, newPhongMaterial);
+					} else {
+						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial);
+					}
 					this.buffer.setPixel(x, y, color);
 				}
 			} else if (seen) {
