@@ -355,9 +355,6 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
 		var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial);
 	}
 	
-	
-	
-	
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
 		var seen = false;
