@@ -411,11 +411,22 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 					var view = this.cameraPosition.sub(v);
 					
 					var color;
-					if (uvs != undefined) {
+					if (uvs !== undefined) {
 						var uv = {};
 						uv.x = uvs[0].x*triCoords[0]+uvs[1].x*triCoords[1]+uvs[2].x*triCoords[2];
 						uv.y = uvs[0].y*triCoords[0]+uvs[1].y*triCoords[1]+uvs[2].y*triCoords[2];
 						var newPhongMaterial = Renderer.getPhongMaterial(uv, material);
+
+            if (newPhongMaterial.xyzNormal !== undefined) {
+              var rgb = newPhongMaterial.xyzNormal;
+              //console.log("hello");
+              var xVal = 2 * rgb.r - 1;
+              var yVal = 2 * rgb.g - 1;
+              var zVal = 2 * rgb.b - 1;
+
+              n = new THREE.Vector3(xVal, yVal, zVal);
+            }
+
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, newPhongMaterial);
 					} else {
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial);
