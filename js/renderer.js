@@ -16,11 +16,16 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
   var ndotl = normal.dot(light_dir);
   color.plus(phongMaterial.diffuse.copy().multipliedBy(ndotl));
 
-  var l = (new THREE.Vector3()).copy(lightPos);
-  var r = l.reflect(normal);
-  var vdotr = view.dot(r);
-
-//  color.plus(phongMaterial.specular.copy().multipliedBy(vdotr));
+  var l = (((new THREE.Vector3()).copy(lightPos)).sub(vertex)).normalize();
+  var n = (new THREE.Vector3()).copy(normal);
+  var r = ((n.multiplyScalar((l.dot(normal))*2)).sub(l)).normalize();
+  var e = (((new THREE.Vector3()).copy(view)).sub(vertex)).normalize();
+  var vdotr = e.dot(r);
+  if (vdotr < 0) vdotr = 0;
+  if (vdotr > 1) vdotr = 1;
+  var v = Math.pow(vdotr,phongMaterial.shininess);
+  var spec = (phongMaterial.specular.copy()).multipliedBy(v);
+  color.plus(spec);
 
    color.plus(phongMaterial.ambient);
   // ----------- STUDENT CODE BEGIN ------------
