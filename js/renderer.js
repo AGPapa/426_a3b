@@ -299,7 +299,14 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	normal.normalize();
 	
 	var phongMaterial;
-	phongMaterial = Renderer.getPhongMaterial(undefined, material);
+	if (uv != undefined) {
+		phongMaterial = Renderer.getPhongMaterial(undefined, material);
+	} else {
+		var uv = {};
+		uv.x = (uvs[0].x+uvs[1].x+uvs[2].x)/3;
+		uv.y = (uvs[0].y+uvs[1].y+uvs[2].y)/3;
+		phongMaterial = Renderer.getPhongMaterial(uv, material);
+	}
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
@@ -328,16 +335,28 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
   // ----------- STUDENT CODE BEGIN ------------
   // ----------- Our reference solution uses 42 lines of code.
 	
-	var phongMaterial = Renderer.getPhongMaterial(uvs, material);
-	
+
 	var view0 = this.cameraPosition.sub(verts[0]);
-	var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial);
-	
 	var view1 = this.cameraPosition.sub(verts[1]);
-	var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial);
-	
 	var view2 = this.cameraPosition.sub(verts[2]);
-	var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial);
+	
+	var phongMaterial;
+	if (uvs != undefined) {
+		var phongMaterial0 = Renderer.getPhongMaterial(uvs[0], material);
+		var phongMaterial1 = Renderer.getPhongMaterial(uvs[1], material);
+		var phongMaterial2 = Renderer.getPhongMaterial(uvs[2], material);
+		var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial0);
+		var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial1);
+		var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial2);
+	} else {
+		var phongMaterial = Renderer.getPhongMaterial(undefined, material);
+		var color0 = Reflection.phongReflectionModel(verts[0], view0, normals[0], this.lightPos, phongMaterial);
+		var color1 = Reflection.phongReflectionModel(verts[1], view1, normals[1], this.lightPos, phongMaterial);
+		var color2 = Reflection.phongReflectionModel(verts[2], view2, normals[2], this.lightPos, phongMaterial);
+	}
+	
+	
+	
 	
 	var box = Renderer.computeBoundingBox(projectedVerts);
 	for (var x = Math.floor(box.minX); x < box.maxX; x++) {
