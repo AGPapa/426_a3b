@@ -417,16 +417,18 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 						uv.y = uvs[0].y*triCoords[0]+uvs[1].y*triCoords[1]+uvs[2].y*triCoords[2];
 						var newPhongMaterial = Renderer.getPhongMaterial(uv, material);
 
-            if (newPhongMaterial.xyzNormal !== undefined) {
-              var rgb = newPhongMaterial.xyzNormal;
-              //console.log("hello");
-              var xVal = 2 * rgb.r - 1;
-              var yVal = 2 * rgb.g - 1;
-              var zVal = 2 * rgb.b - 1;
+						if (material.xyzNormal != undefined) {
+							if (material.xyzNormal.width > 1) {
+								var rgb = material.xyzNormal.getPixel(Math.floor(uv.x * (material.xyzNormal.width-1)), Math.floor(uv.y * (material.xyzNormal.height-1)));
+	
+								var xVal = 2 * rgb.r - 1;
+								var yVal = 2 * rgb.g - 1;
+								var zVal = 2 * rgb.b - 1;
 
-              n = new THREE.Vector3(xVal, yVal, zVal);
-            }
-
+								n = new THREE.Vector3(xVal, yVal, zVal);
+								n.normalize();
+							}
+						}
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, newPhongMaterial);
 					} else {
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial);
