@@ -16,13 +16,11 @@ Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phong
   var ndotl = normal.dot(light_dir);
   color.plus(phongMaterial.diffuse.copy().multipliedBy(ndotl));
 
-  var l = (((new THREE.Vector3()).copy(lightPos)).sub(vertex)).normalize();
-  var n = (new THREE.Vector3()).copy(normal);
-  var r = l.reflect(n);
-  var e = (((new THREE.Vector3()).copy(view)).sub(vertex)).normalize();
-  var vdotr = e.dot(r);
+  var r = light_dir.reflect(normal);
+  var v = view.normalize();
+  var vdotr = -r.dot(v);
   if (vdotr < 0) vdotr = 0;
-//  if (vdotr > 1) vdotr = 1;
+  if (vdotr > 1) vdotr = 1;
   var v = Math.pow(vdotr,phongMaterial.shininess);
   var spec = (phongMaterial.specular.copy()).multipliedBy(v);
   color.plus(spec);
@@ -292,20 +290,21 @@ Renderer.drawTriangleFlat = function(verts, projectedVerts, normals, uvs, materi
 	var cent = new THREE.Vector3(0,0,0);
 	cent.add(verts[0]).add(verts[1]).add(verts[2]);
 	cent.divideScalar(3);
-	var view = this.cameraPosition.sub(cent);
+	var view = ((new THREE.Vector3()).copy(this.cameraPosition)).sub(cent);
+	view.normalize();
 	var v0 = (new THREE.Vector3(0,0,0)).copy(verts[0]);
 	
 	var normal = (new THREE.Vector3(0,0,0)).add(normals[0]).add(normals[1]).add(normals[2]);
 	normal.normalize();
 	
 	var phongMaterial;
-	if (uv != undefined) {
-		phongMaterial = Renderer.getPhongMaterial(undefined, material);
-	} else {
+	if (uvs != undefined) {
 		var uv = {};
 		uv.x = (uvs[0].x+uvs[1].x+uvs[2].x)/3;
 		uv.y = (uvs[0].y+uvs[1].y+uvs[2].y)/3;
 		phongMaterial = Renderer.getPhongMaterial(uv, material);
+	} else {
+		phongMaterial = Renderer.getPhongMaterial(undefined, material);
 	}
 	color = Reflection.phongReflectionModel(cent, view, normal, this.lightPos, phongMaterial)
 	
@@ -336,9 +335,9 @@ Renderer.drawTriangleGouraud = function(verts, projectedVerts, normals, uvs, mat
   // ----------- Our reference solution uses 42 lines of code.
 	
 
-	var view0 = this.cameraPosition.sub(verts[0]);
-	var view1 = this.cameraPosition.sub(verts[1]);
-	var view2 = this.cameraPosition.sub(verts[2]);
+	var view0 = ((new THREE.Vector3()).copy(this.cameraPosition)).sub(verts[0]);
+	var view1 = ((new THREE.Vector3()).copy(this.cameraPosition)).sub(verts[1]);
+	var view2 = ((new THREE.Vector3()).copy(this.cameraPosition)).sub(verts[2]);
 	
 	var phongMaterial;
 	if (uvs != undefined) {
@@ -408,7 +407,9 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 					var v1 = ((new THREE.Vector3()).copy(verts[1])).multiplyScalar(triCoords[1]);
 					var v2 = ((new THREE.Vector3()).copy(verts[2])).multiplyScalar(triCoords[2]);
 					var v = v0.add(v1).add(v2);
-					var view = this.cameraPosition.sub(v);
+					var view = ((new THREE.Vector3(0,0,0)).copy(this.cameraPosition)).sub(v);
+					view.normalize();
+				//	var view = this.cameraPosition.sub(v);
 					
 					var color;
 					if (uvs !== undefined) {
