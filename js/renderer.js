@@ -9,7 +9,7 @@ var Reflection = Reflection || {
 
 Reflection.phongReflectionModel = function(vertex, view, normal, lightPos, phongMaterial) {
   var color = new Pixel(0, 0, 0);
-  normal.normalize();
+ // normal.normalize();
 
   // diffuse
   var light_dir = (new THREE.Vector3()).subVectors(lightPos, vertex).normalize();
@@ -393,23 +393,19 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 			var triCoords = Renderer.computeBarycentric(projectedVerts, x, y);
 			if (triCoords != undefined) {
 				seen = true;
-				//01, 10, 20
+				
 				var z = projectedVerts[0].z * triCoords[0] + projectedVerts[1].z * triCoords[1] + projectedVerts[2].z * triCoords[2];
 				if (z < this.zBuffer[x][y]) {
 					this.zBuffer[x][y] = z;
-					
-					var n0 = ((new THREE.Vector3()).copy(normals[0])).multiplyScalar(triCoords[0]);
-					var n1 = ((new THREE.Vector3()).copy(normals[1])).multiplyScalar(triCoords[1]);
-					var n2 = ((new THREE.Vector3()).copy(normals[2])).multiplyScalar(triCoords[2]);
-					var n = n0.add(n1).add(n2);
-					
+						
 					var v0 = ((new THREE.Vector3()).copy(verts[0])).multiplyScalar(triCoords[0]);
 					var v1 = ((new THREE.Vector3()).copy(verts[1])).multiplyScalar(triCoords[1]);
 					var v2 = ((new THREE.Vector3()).copy(verts[2])).multiplyScalar(triCoords[2]);
 					var v = v0.add(v1).add(v2);
 					var view = ((new THREE.Vector3(0,0,0)).copy(this.cameraPosition)).sub(v);
 					view.normalize();
-				//	var view = this.cameraPosition.sub(v);
+					
+					var n;
 					
 					var color;
 					if (uvs !== undefined) {
@@ -418,20 +414,27 @@ Renderer.drawTrianglePhong = function(verts, projectedVerts, normals, uvs, mater
 						uv.y = uvs[0].y*triCoords[0]+uvs[1].y*triCoords[1]+uvs[2].y*triCoords[2];
 						var newPhongMaterial = Renderer.getPhongMaterial(uv, material);
 
-						if (material.xyzNormal != undefined) {
-							if (material.xyzNormal.width > 1) {
-								var rgb = material.xyzNormal.getPixel(Math.floor(uv.x * (material.xyzNormal.width-1)), Math.floor(uv.y * (material.xyzNormal.height-1)));
-	
-								var xVal = 2 * rgb.r - 1;
-								var yVal = 2 * rgb.g - 1;
-								var zVal = 2 * rgb.b - 1;
+						if (material.xyzNormal != undefined && material.xyzNormal.width > 1) {
+							var rgb = material.xyzNormal.getPixel(Math.floor(uv.x * (material.xyzNormal.width-1)), Math.floor(uv.y * (material.xyzNormal.height-1)));
 
-								n = new THREE.Vector3(xVal, yVal, zVal);
-								n.normalize();
-							}
+							var xVal = 2 * rgb.r - 1;
+							var yVal = 2 * rgb.g - 1;
+							var zVal = 2 * rgb.b - 1;
+
+							n = new THREE.Vector3(xVal, yVal, zVal);
+							n.normalize();
+						} else {
+							var n0 = ((new THREE.Vector3()).copy(normals[0])).multiplyScalar(triCoords[0]);
+							var n1 = ((new THREE.Vector3()).copy(normals[1])).multiplyScalar(triCoords[1]);
+							var n2 = ((new THREE.Vector3()).copy(normals[2])).multiplyScalar(triCoords[2]);
+							n = n0.add(n1).add(n2);
 						}
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, newPhongMaterial);
 					} else {
+						var n0 = ((new THREE.Vector3()).copy(normals[0])).multiplyScalar(triCoords[0]);
+						var n1 = ((new THREE.Vector3()).copy(normals[1])).multiplyScalar(triCoords[1]);
+						var n2 = ((new THREE.Vector3()).copy(normals[2])).multiplyScalar(triCoords[2]);
+						n = n0.add(n1).add(n2);
 						color = Reflection.phongReflectionModel(v, view, n, this.lightPos, phongMaterial);
 					}
 					this.buffer.setPixel(x, y, color);
